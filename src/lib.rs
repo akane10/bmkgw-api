@@ -18,7 +18,7 @@ fn internal_error() -> &'static str {
 
 #[catch(404)]
 fn not_found(req: &Request) -> String {
-  format!("I couldn't find '{}'. Try something else?", req.uri())
+  format!("Couldn't find '{}'. Try something else?", req.uri())
 }
 
 pub fn rocket_app() -> rocket::Rocket {
