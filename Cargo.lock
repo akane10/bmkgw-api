@@ -389,7 +389,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "gempa"
+name = "gempa-server"
 version = "0.1.0"
 dependencies = [
  "bmkg-wrapper",

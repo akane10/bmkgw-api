@@ -1,5 +1,5 @@
-use gempa;
+use gempa_server;
 
 fn main() {
-    gempa::rocket_app().launch();
+    gempa_server::rocket_app().launch();
 }
