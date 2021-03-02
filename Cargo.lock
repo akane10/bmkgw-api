@@ -133,7 +133,7 @@ dependencies = [
 [[package]]
 name = "bmkg-wrapper"
 version = "0.1.0"
-source = "git+https://gitlab.com/akane10/bmkg-wrapper#cca14b8b5fa0041002253c321fdb34c996bff124"
+source = "git+https://gitlab.com/akane10/bmkg-wrapper#2a034c51b8c18701f79966095bc081479259b847"
 dependencies = [
  "reqwest",
  "serde_json",
