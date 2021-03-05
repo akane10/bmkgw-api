@@ -13,19 +13,23 @@ use rocket::request::Request;
 
 #[catch(500)]
 fn internal_error() -> &'static str {
-  "Whoops! Looks like we messed up."
+    "Whoops! Looks like we messed up."
 }
 
 #[catch(404)]
 fn not_found(req: &Request) -> String {
-  format!("Couldn't find '{}'. Try something else?", req.uri())
+    format!("Couldn't find '{}'. Try something else?", req.uri())
 }
 
 pub fn rocket_app() -> rocket::Rocket {
-  rocket::ignite()
-    .mount(
-      "/api",
-      routes![routes::gempa::gempa, routes::gempa::gempa_data],
-    )
-    .register(catchers![not_found, internal_error])
+    rocket::ignite()
+        .mount(
+            "/api",
+            routes![routes::gempa::gempa, routes::gempa::gempa_data],
+        )
+        .mount(
+            "/api",
+            routes![routes::cuaca::cuaca, routes::cuaca::cuaca_data],
+        )
+        .register(catchers![not_found, internal_error])
 }

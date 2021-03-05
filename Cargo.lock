@@ -133,7 +133,7 @@ dependencies = [
 [[package]]
 name = "bmkg-wrapper"
 version = "0.1.0"
-source = "git+https://gitlab.com/akane10/bmkg-wrapper?branch=master#9a0a169ea8eb4371b37ee38e39ad724d7fcda47d"
+source = "git+https://gitlab.com/akane10/bmkg-wrapper?branch=master#9f7514e2d5c6709839d00b83224838daa94704ca"
 dependencies = [
  "quick-xml",
  "reqwest",
