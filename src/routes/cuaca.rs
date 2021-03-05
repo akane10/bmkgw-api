@@ -1,5 +1,5 @@
-use bmkg_wrapper::cuaca::{self, Data, Domain, Province};
-use bmkg_wrapper::Error;
+use bmkgw::cuaca::{self, Data, Domain, Province};
+use bmkgw::Error;
 use rocket::http::Status;
 use rocket_contrib::json::Json;
 // use serde_json::{json, Value};

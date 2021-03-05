@@ -1,5 +1,5 @@
-use bmkg_wrapper::gempa::{self, Gempa, Url};
-use bmkg_wrapper::Error;
+use bmkgw::gempa::{self, Gempa, Url};
+use bmkgw::Error;
 use rocket::http::Status;
 use rocket_contrib::json::Json;
 // use serde_json::{json, Value};

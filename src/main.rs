@@ -1,5 +1,5 @@
-use gempa_server;
+use bmkgw_api;
 
 fn main() {
-    gempa_server::rocket_app().launch();
+    bmkgw_api::rocket_app().launch();
 }
