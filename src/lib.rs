@@ -29,7 +29,11 @@ pub fn rocket_app() -> rocket::Rocket {
         )
         .mount(
             "/api",
-            routes![routes::cuaca::cuaca, routes::cuaca::cuaca_data],
+            routes![
+                routes::cuaca::cuaca,
+                routes::cuaca::cuaca_data,
+                routes::cuaca::location
+            ],
         )
         .register(catchers![not_found, internal_error])
 }
