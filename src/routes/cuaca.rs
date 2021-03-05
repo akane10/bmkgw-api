@@ -1,4 +1,4 @@
-use bmkg_wrapper::cuaca::{self, Data, Domain, Url};
+use bmkg_wrapper::cuaca::{self, Data, Domain, Province};
 use bmkg_wrapper::Error;
 use rocket::http::Status;
 use rocket_contrib::json::Json;
@@ -15,7 +15,7 @@ pub struct Location {
 #[get("/cuaca/<data>")]
 #[tokio::main]
 pub async fn cuaca_data(data: String) -> Result<Json<Data>, Status> {
-    match Url::from_str(data) {
+    match Province::from_str(data) {
         Some(url) => {
             let data = cuaca::get_data(url).await;
             match data {
@@ -30,7 +30,7 @@ pub async fn cuaca_data(data: String) -> Result<Json<Data>, Status> {
 #[get("/cuaca")]
 #[tokio::main]
 pub async fn cuaca() -> Result<Json<Data>, Error> {
-    let data = cuaca::get_data(Url::Indonesia).await?;
+    let data = cuaca::get_data(Province::Indonesia).await?;
     Ok(Json(data))
 }
 
