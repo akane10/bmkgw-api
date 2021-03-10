@@ -3,6 +3,7 @@
 #[macro_use]
 extern crate rocket;
 
+mod cors;
 mod routes;
 
 // #[macro_use]
@@ -25,7 +26,12 @@ pub fn rocket_app() -> rocket::Rocket {
     rocket::ignite()
         .mount(
             "/api",
-            routes![routes::gempa::gempa, routes::gempa::gempa_data],
+            routes![
+                routes::gempa::gempa,
+                routes::gempa::gempa_data,
+                routes::gempa::gempa_notif,
+                routes::gempa::gempa_key
+            ],
         )
         .mount(
             "/api",
@@ -35,5 +41,6 @@ pub fn rocket_app() -> rocket::Rocket {
                 routes::cuaca::location
             ],
         )
+        .attach(cors::CORS())
         .register(catchers![not_found, internal_error])
 }
