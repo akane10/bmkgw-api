@@ -53,7 +53,7 @@ pub fn gempa_notif(sub: Json<Sub>) -> Result<Status, redis::RedisError> {
     Ok(Status::Ok)
 }
 
-#[delete("/gempa/notif", data = "<auth>")]
+#[delete("/gempa/notif/<auth>")]
 pub fn gempa_delete_notif(auth: String) -> Result<Status, redis::RedisError> {
     let mut con = conn_redis()?;
     let _: () = con.del(auth)?;
