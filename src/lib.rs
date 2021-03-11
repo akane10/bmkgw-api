@@ -30,6 +30,7 @@ pub fn rocket_app() -> rocket::Rocket {
                 routes::gempa::gempa,
                 routes::gempa::gempa_data,
                 routes::gempa::gempa_notif,
+                routes::gempa::gempa_delete_notif,
                 routes::gempa::gempa_key
             ],
         )

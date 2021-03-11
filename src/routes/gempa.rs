@@ -8,6 +8,12 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use tokio;
 
+fn conn_redis() -> redis::RedisResult<redis::Connection> {
+    let client = redis::Client::open("redis://127.0.0.1/")?;
+    let con = client.get_connection()?;
+    Ok(con)
+}
+
 #[get("/gempa/<data>")]
 #[tokio::main]
 pub async fn gempa_data(data: String) -> Result<Json<Vec<Gempa>>, Status> {
@@ -39,11 +45,18 @@ pub struct Sub {
 
 #[post("/gempa/notif", data = "<sub>")]
 pub fn gempa_notif(sub: Json<Sub>) -> Result<Status, redis::RedisError> {
-    let client = redis::Client::open("redis://127.0.0.1/")?;
-    let mut con = client.get_connection()?;
+    let mut con = conn_redis()?;
     let auth = sub.auth.clone();
     let data: String = json!(*sub).to_string();
     let _: () = con.set(auth, data)?;
+
+    Ok(Status::Ok)
+}
+
+#[delete("/gempa/notif", data = "<auth>")]
+pub fn gempa_delete_notif(auth: String) -> Result<Status, redis::RedisError> {
+    let mut con = conn_redis()?;
+    let _: () = con.del(auth)?;
 
     Ok(Status::Ok)
 }
@@ -54,8 +67,7 @@ pub struct Res {
 }
 #[get("/gempa/pub_key")]
 pub fn gempa_key() -> Result<Json<Res>, redis::RedisError> {
-    let client = redis::Client::open("redis://127.0.0.1/")?;
-    let mut con = client.get_connection()?;
+    let mut con = conn_redis()?;
     let k = con.get("public_key");
 
     match k {
