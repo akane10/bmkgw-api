@@ -4,6 +4,7 @@
 extern crate rocket;
 
 mod cors;
+mod error;
 mod routes;
 
 // #[macro_use]

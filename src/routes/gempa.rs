@@ -1,5 +1,5 @@
+use crate::error::Error;
 use bmkgw::gempa::{self, Gempa, Url};
-use bmkgw::Error;
 use redis;
 use redis::Commands;
 use rocket::http::Status;
