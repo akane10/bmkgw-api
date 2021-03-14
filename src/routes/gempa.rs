@@ -1,11 +1,14 @@
+use crate::auth::Auth;
 use crate::error::Error;
 use bmkgw::gempa::{self, Gempa, Url};
+use chrono::{Duration, Utc};
 use redis;
 use redis::Commands;
 use rocket::http::Status;
 use rocket_contrib::json::Json;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
+use std::env;
 use tokio;
 
 fn conn_redis() -> redis::RedisResult<redis::Connection> {
@@ -44,7 +47,7 @@ pub struct Sub {
 }
 
 #[post("/gempa/notif", data = "<sub>")]
-pub fn gempa_notif(sub: Json<Sub>) -> Result<Status, redis::RedisError> {
+pub fn gempa_notif(_auth: Auth, sub: Json<Sub>) -> Result<Status, redis::RedisError> {
     let mut con = conn_redis()?;
     let auth = sub.auth.clone();
     let data: String = json!(*sub).to_string();
@@ -58,7 +61,10 @@ pub struct SubAuth {
     pub auth: Option<String>,
 }
 #[delete("/gempa/notif", data = "<sub_auth>")]
-pub fn gempa_delete_notif(sub_auth: Json<SubAuth>) -> Result<Status, redis::RedisError> {
+pub fn gempa_delete_notif(
+    _auth: Auth,
+    sub_auth: Json<SubAuth>,
+) -> Result<Status, redis::RedisError> {
     match &sub_auth.auth {
         Some(v) => {
             let mut con = conn_redis()?;
@@ -75,12 +81,40 @@ pub struct Res {
     pub key: Option<String>,
 }
 #[get("/gempa/pub_key")]
-pub fn gempa_key() -> Result<Json<Res>, redis::RedisError> {
+pub fn gempa_key(_auth: Auth) -> Result<Json<Res>, redis::RedisError> {
     let mut con = conn_redis()?;
     let k = con.get("public_key");
 
     match k {
         Ok(v) => Ok(Json(Res { key: Some(v) })),
         _ => Ok(Json(Res { key: None })),
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Data {
+    pub password: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ResAuth {
+    pub token: String,
+}
+#[post("/gempa/token", data = "<data>")]
+pub fn gempa_login(data: Json<Data>) -> Result<Json<ResAuth>, Error> {
+    let mut con = conn_redis()?;
+    let pass: String = con.get("pass_u")?;
+    let matches = argon2::verify_encoded(&pass, data.password.as_bytes())?;
+
+    if matches {
+        let exp = Utc::now() + Duration::minutes(30);
+        let secret = env::var("SECRET_KEY")?;
+        let token = Auth {
+            exp: exp.timestamp(),
+        }
+        .token(&secret.into_bytes());
+        Ok(Json(ResAuth { token }))
+    } else {
+        Err(Error::StatusError(Status::Unauthorized))
     }
 }

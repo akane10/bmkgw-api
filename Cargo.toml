@@ -3,6 +3,7 @@ name = "bmkgw-api"
 version = "0.1.0"
 authors = ["yapie <targaryen.akane@gmail.com>"]
 edition = "2018"
+default-run = "bmkgw-api"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -16,3 +17,7 @@ rocket = "0.4.5"
 rocket_contrib = "0.4.5"
 bmkgw = { git = "https://gitlab.com/akane10/bmkgw", branch = "master" }
 redis = "0.20.0"
+dotenv = "0.15"
+jsonwebtoken = "7.2.0"
+chrono = "0.4.11"
+rust-argon2 = "0.8.3"

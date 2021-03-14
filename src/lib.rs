@@ -3,9 +3,13 @@
 #[macro_use]
 extern crate rocket;
 
+mod auth;
+mod config;
 mod cors;
-mod error;
+pub mod error;
 mod routes;
+
+use dotenv::dotenv;
 
 // #[macro_use]
 // extern crate rocket_contrib;
@@ -24,6 +28,7 @@ fn not_found(req: &Request) -> String {
 }
 
 pub fn rocket_app() -> rocket::Rocket {
+    dotenv().ok();
     rocket::ignite()
         .mount(
             "/api",
@@ -32,7 +37,8 @@ pub fn rocket_app() -> rocket::Rocket {
                 routes::gempa::gempa_data,
                 routes::gempa::gempa_notif,
                 routes::gempa::gempa_delete_notif,
-                routes::gempa::gempa_key
+                routes::gempa::gempa_key,
+                routes::gempa::gempa_login
             ],
         )
         .mount(
@@ -44,5 +50,6 @@ pub fn rocket_app() -> rocket::Rocket {
             ],
         )
         .attach(cors::CORS())
+        .attach(config::AppState::manage())
         .register(catchers![not_found, internal_error])
 }
