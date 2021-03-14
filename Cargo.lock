@@ -145,7 +145,7 @@ dependencies = [
 [[package]]
 name = "bmkgw"
 version = "0.1.0"
-source = "git+https://gitlab.com/akane10/bmkgw?branch=master#a98766ca40624108e75a6b66e83db55accaf00e6"
+source = "git+https://gitlab.com/akane10/bmkgw?branch=master#fcaa104a6a3f2d3f687b0b666729782dba4189c9"
 dependencies = [
  "quick-xml",
  "reqwest",

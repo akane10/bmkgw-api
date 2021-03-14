@@ -1,5 +1,6 @@
 use rocket::response::{self, Responder};
 use rocket::{http::Status, request::Request};
+use std::fmt;
 
 #[derive(Debug)]
 pub enum Error {
@@ -20,32 +21,32 @@ impl<'r> Responder<'r> for Error {
     }
 }
 
-impl From<redis::RedisError> for Error {
-    fn from(error: redis::RedisError) -> Self {
-        Error::RedisError(error)
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        match *self {
+            Error::RedisError(ref x) => write!(f, "{:#?}", x.detail()),
+            Error::BmkgwError(ref x) => write!(f, "{}", x),
+            Error::StatusError(ref x) => write!(f, "{}", x),
+            Error::ArgonError(ref x) => write!(f, "{}", x),
+            Error::EnvError(ref x) => write!(f, "{}", x),
+        }
     }
 }
 
-impl From<bmkgw::Error> for Error {
-    fn from(error: bmkgw::Error) -> Self {
-        Error::BmkgwError(error)
-    }
+impl std::error::Error for Error {}
+
+macro_rules! error_wrap {
+    ($f:ty, $e:expr) => {
+        impl From<$f> for Error {
+            fn from(f: $f) -> Error {
+                $e(f)
+            }
+        }
+    };
 }
 
-impl From<Status> for Error {
-    fn from(error: Status) -> Self {
-        Error::StatusError(error)
-    }
-}
-
-impl From<argon2::Error> for Error {
-    fn from(error: argon2::Error) -> Self {
-        Error::ArgonError(error)
-    }
-}
-
-impl From<std::env::VarError> for Error {
-    fn from(error: std::env::VarError) -> Self {
-        Error::EnvError(error)
-    }
-}
+error_wrap!(redis::RedisError, Error::RedisError);
+error_wrap!(bmkgw::Error, Error::BmkgwError);
+error_wrap!(Status, Error::StatusError);
+error_wrap!(argon2::Error, Error::ArgonError);
+error_wrap!(std::env::VarError, Error::EnvError);
