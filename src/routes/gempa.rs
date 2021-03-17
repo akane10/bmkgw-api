@@ -41,7 +41,7 @@ pub struct Sub {
 }
 
 #[post("/gempa/notif", data = "<sub>")]
-pub fn gempa_notif(sub: Json<Sub>) -> Result<Status, redis::RedisError> {
+pub fn gempa_notif(sub: Json<Sub>) -> Result<Status, Error> {
     let mut con = conn_redis()?;
     let auth = sub.auth.clone();
     let data: String = json!(*sub).to_string();
@@ -55,7 +55,7 @@ pub struct SubAuth {
     pub auth: Option<String>,
 }
 #[delete("/gempa/notif", data = "<sub_auth>")]
-pub fn gempa_delete_notif(sub_auth: Json<SubAuth>) -> Result<Status, redis::RedisError> {
+pub fn gempa_delete_notif(sub_auth: Json<SubAuth>) -> Result<Status, Error> {
     match &sub_auth.auth {
         Some(v) => {
             let mut con = conn_redis()?;
