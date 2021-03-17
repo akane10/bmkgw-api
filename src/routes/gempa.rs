@@ -16,16 +16,13 @@ fn conn_redis() -> redis::RedisResult<redis::Connection> {
 
 #[get("/gempa/<data>")]
 #[tokio::main]
-pub async fn gempa_data(data: String) -> Result<Json<Vec<Gempa>>, Status> {
+pub async fn gempa_data(data: String) -> Result<Json<Vec<Gempa>>, Error> {
     match Url::from_str(data) {
         Some(url) => {
-            let data = gempa::get_data(url).await;
-            match data {
-                Ok(val) => Ok(Json(val)),
-                _ => Err(Status::InternalServerError),
-            }
+            let data = gempa::get_data(url).await?;
+            Ok(Json(data))
         }
-        None => Err(Status::NotFound),
+        None => Err(Error::StatusError(Status::NotFound)),
     }
 }
 
@@ -48,7 +45,7 @@ pub fn gempa_notif(sub: Json<Sub>) -> Result<Status, redis::RedisError> {
     let mut con = conn_redis()?;
     let auth = sub.auth.clone();
     let data: String = json!(*sub).to_string();
-    let _: () = con.set(auth, data)?;
+    con.set(auth, data)?;
 
     Ok(Status::Ok)
 }
@@ -63,7 +60,6 @@ pub fn gempa_delete_notif(sub_auth: Json<SubAuth>) -> Result<Status, redis::Redi
         Some(v) => {
             let mut con = conn_redis()?;
             let _: () = con.del(v)?;
-
             Ok(Status::Ok)
         }
         _ => Ok(Status::BadRequest),

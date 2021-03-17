@@ -1,27 +1,46 @@
 use rocket::response::{self, Responder};
 use rocket::{http::Status, request::Request};
+use std::fmt;
 
 #[derive(Debug)]
 pub enum Error {
     RedisError(redis::RedisError),
     BmkgwError(bmkgw::Error),
+    StatusError(Status),
 }
 
 impl<'r> Responder<'r> for Error {
     fn respond_to(self, _: &Request) -> response::Result<'r> {
         println!("Oppss: {:#?}", self);
-        Err(Status::InternalServerError)
+        match self {
+            Error::StatusError(e) => Err(e),
+            _ => Err(Status::InternalServerError),
+        }
     }
 }
 
-impl From<redis::RedisError> for Error {
-    fn from(error: redis::RedisError) -> Self {
-        Error::RedisError(error)
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        match *self {
+            Error::RedisError(ref x) => write!(f, "{:#?}", x.detail()),
+            Error::BmkgwError(ref x) => write!(f, "{}", x),
+            Error::StatusError(ref x) => write!(f, "{}", x),
+        }
     }
 }
 
-impl From<bmkgw::Error> for Error {
-    fn from(error: bmkgw::Error) -> Self {
-        Error::BmkgwError(error)
-    }
+impl std::error::Error for Error {}
+
+macro_rules! error_wrap {
+    ($f:ty, $e:expr) => {
+        impl From<$f> for Error {
+            fn from(f: $f) -> Error {
+                $e(f)
+            }
+        }
+    };
 }
+
+error_wrap!(redis::RedisError, Error::RedisError);
+error_wrap!(bmkgw::Error, Error::BmkgwError);
+error_wrap!(Status, Error::StatusError);
