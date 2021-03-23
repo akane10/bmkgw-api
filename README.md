@@ -5,7 +5,7 @@
 - https://gempa.yapie.me/api/gempa
 
 ### Daftar 15 Gempabumi M 5.0+ (/api/gempa/terkini)
-- https://gempa.yapie.me/api/gempa/terkini
+- https://gempa.yapie.me/api/gempa/gempaterkini
 
 ### Daftar 15 Gempabumi Dirasakan (/api/gempa/gempadirasakan)
 - https://gempa.yapie.me/api/gempa/gempadirasakan
