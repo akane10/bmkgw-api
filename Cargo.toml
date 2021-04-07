@@ -14,3 +14,5 @@ rocket = "0.4.7"
 rocket_contrib = "0.4.7"
 bmkgw = { git = "https://gitlab.com/akane10/bmkgw", branch = "master" }
 redis = "0.20.0"
+rocket_cors = "0.5.2"
+

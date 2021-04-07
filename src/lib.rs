@@ -3,7 +3,6 @@
 #[macro_use]
 extern crate rocket;
 
-mod cors;
 mod error;
 mod routes;
 
@@ -12,6 +11,7 @@ mod routes;
 
 // use rocket::http::Status;
 use rocket::request::Request;
+use rocket_cors;
 
 #[catch(500)]
 fn internal_error() -> &'static str {
@@ -43,6 +43,6 @@ pub fn rocket_app() -> rocket::Rocket {
                 routes::cuaca::location
             ],
         )
-        .attach(cors::CORS())
+        .attach(rocket_cors::CorsOptions::default().to_cors().unwrap())
         .register(catchers![not_found, internal_error])
 }
